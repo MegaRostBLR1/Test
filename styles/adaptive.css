@@ -120,6 +120,11 @@
         font-size: 14px;
     }
 
+    .mobile__menu .button--arrow {
+        margin-left: 47px;
+        padding-top: 2px;
+    }
+
     .mobile__menu .button--arrow path {
         fill: #000000;
     }

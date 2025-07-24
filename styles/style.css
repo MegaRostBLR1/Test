@@ -104,7 +104,7 @@ ul {
 }
 
 .button--arrow {
-    margin-left: 47px;
+    margin-left: 22px;
 }
 
 .header__burger {
@@ -255,7 +255,13 @@ ul {
     border-radius: 166px;
     font-size: 21px;
     border: 1px solid #FFFFFF;
+    background-color: #FFFFFF;
     cursor: pointer;
+}
+
+.hero__btn:hover {
+    border: 1px solid #FFFFFF;
+    background-color: #FFFFFF;
 }
 
 
