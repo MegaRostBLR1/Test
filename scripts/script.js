@@ -18,6 +18,7 @@ document.addEventListener('DOMContentLoaded', function() {
         document.body.style.overflow = 'hidden';
     }
 
+
     // Функция для закрытия меню
     function closeMenu() {
         mobileMenu.classList.remove('active');
@@ -27,6 +28,7 @@ document.addEventListener('DOMContentLoaded', function() {
             document.body.style.overflow = '';
         }, 300);
     }
+
 
     // Обработчики событий
     burgerBtn.addEventListener('click', openMenu);
@@ -38,7 +40,6 @@ document.addEventListener('DOMContentLoaded', function() {
             closeMenu();
         }
     });
-
 
     function openPopup() {
         popup.style.display = 'flex';
@@ -56,11 +57,14 @@ document.addEventListener('DOMContentLoaded', function() {
         }, 300);
     }
 
+
     // Обработчик клика на кнопку INFO
     infoBtn.addEventListener('click', openPopup);
 
+
     // Обработчик клика на крестик
     popupClose.addEventListener('click', closePopup);
+
 
     // Закрытие попапа при клике вне его содержимого
     popup.addEventListener('click', function(e) {
@@ -68,6 +72,7 @@ document.addEventListener('DOMContentLoaded', function() {
             closePopup();
         }
     });
+
 
     // Инициализация слайдера
     const sliderContainer = document.querySelector('.slider-container');
@@ -80,10 +85,11 @@ document.addEventListener('DOMContentLoaded', function() {
     let endX = 0;
     const swipeThreshold = 50; // Минимальное расстояние свайпа для смены слайда
 
-    // Функция для перехода к слайду
+
+    // Обновите функцию goToSlide
     function goToSlide(index, animate = true) {
-        if (index < 0) index = slideCount - 1;
-        if (index >= slideCount) index = 0;
+        if (index < 0) index = Math.ceil(slideCount / 2) - 1;
+        if (index >= Math.ceil(slideCount / 2)) index = 0;
 
         currentSlide = index;
         const slideWidth = slides[0].offsetWidth +
@@ -95,12 +101,19 @@ document.addEventListener('DOMContentLoaded', function() {
             sliderContainer.style.transition = 'none';
         }
 
-        sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+        // Для планшетов перемещаем на половину ширины контейнера
+        if (window.matchMedia('(min-width: 768px) and (max-width: 1024px)').matches) {
+            sliderContainer.style.transform = `translateX(-${currentSlide * (slideWidth * 2)}px)`;
+        } else {
+            sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
+        }
     }
+
 
     // Обработчики кнопок
     nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
     prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
+
 
     // Обработчики свайпа для тач-устройств
     sliderContainer.addEventListener('touchstart', (e) => {
@@ -135,6 +148,7 @@ document.addEventListener('DOMContentLoaded', function() {
             goToSlide(currentSlide);
         }
     }, { passive: true });
+
 
     // Обработчики свайпа для мыши (для десктопов)
     sliderContainer.addEventListener('mousedown', (e) => {
@@ -182,10 +196,16 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
+
     // Адаптация при изменении размера окна
     window.addEventListener('resize', () => {
+        if (window.matchMedia('(min-width: 768px) and (max-width: 1024px)').matches) {
+            // Для планшетов корректируем currentSlide
+            currentSlide = Math.min(currentSlide, Math.ceil(slideCount / 2) - 1);
+        }
         goToSlide(currentSlide, false);
     });
+
 
     // Инициализация начального положения
     goToSlide(0, false);
