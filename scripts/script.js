@@ -81,15 +81,12 @@ document.addEventListener('DOMContentLoaded', function() {
     const nextBtn = document.querySelector('.slider-arrow--next');
     let currentSlide = 0;
     const slideCount = slides.length;
-    let startX = 0;
-    let endX = 0;
-    const swipeThreshold = 50; // Минимальное расстояние свайпа для смены слайда
 
-
-    // Обновите функцию goToSlide
+// Обновленная функция goToSlide
     function goToSlide(index, animate = true) {
-        if (index < 0) index = Math.ceil(slideCount / 2) - 1;
-        if (index >= Math.ceil(slideCount / 2)) index = 0;
+        // Ограничиваем индекс в пределах количества слайдов
+        if (index < 0) index = slideCount - 1;
+        if (index >= slideCount) index = 0;
 
         currentSlide = index;
         const slideWidth = slides[0].offsetWidth +
@@ -101,35 +98,29 @@ document.addEventListener('DOMContentLoaded', function() {
             sliderContainer.style.transition = 'none';
         }
 
-        // Для планшетов перемещаем на половину ширины контейнера
-        if (window.matchMedia('(min-width: 768px) and (max-width: 1024px)').matches) {
-            sliderContainer.style.transform = `translateX(-${currentSlide * (slideWidth * 2)}px)`;
-        } else {
-            sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
-        }
+        sliderContainer.style.transform = `translateX(-${currentSlide * slideWidth}px)`;
     }
 
-
-    // Обработчики кнопок
+// Обработчики кнопок
     nextBtn.addEventListener('click', () => goToSlide(currentSlide + 1));
     prevBtn.addEventListener('click', () => goToSlide(currentSlide - 1));
 
+// Обработчики свайпа для тач-устройств
+    let startX = 0;
+    let endX = 0;
+    const swipeThreshold = 50;
 
-    // Обработчики свайпа для тач-устройств
     sliderContainer.addEventListener('touchstart', (e) => {
         startX = e.touches[0].clientX;
     }, { passive: true });
 
     sliderContainer.addEventListener('touchmove', (e) => {
         endX = e.touches[0].clientX;
-
-        // Вычисляем разницу и перемещаем слайдер
         const diff = startX - endX;
         const slideWidth = slides[0].offsetWidth +
             parseInt(getComputedStyle(sliderContainer).gap);
         const currentOffset = currentSlide * slideWidth;
 
-        // Временно отключаем анимацию для плавного следования за пальцем
         sliderContainer.style.transition = 'none';
         sliderContainer.style.transform = `translateX(calc(-${currentOffset}px + ${-diff}px))`;
     }, { passive: true });
@@ -138,19 +129,15 @@ document.addEventListener('DOMContentLoaded', function() {
         const diff = startX - endX;
 
         if (diff > swipeThreshold) {
-            // Свайп влево - следующий слайд
             goToSlide(currentSlide + 1);
         } else if (diff < -swipeThreshold) {
-            // Свайп вправо - предыдущий слайд
             goToSlide(currentSlide - 1);
         } else {
-            // Возвращаемся к текущему слайду, если свайп недостаточный
             goToSlide(currentSlide);
         }
     }, { passive: true });
 
-
-    // Обработчики свайпа для мыши (для десктопов)
+// Обработчики свайпа для мыши
     sliderContainer.addEventListener('mousedown', (e) => {
         startX = e.clientX;
         sliderContainer.style.cursor = 'grabbing';
@@ -196,17 +183,11 @@ document.addEventListener('DOMContentLoaded', function() {
         }
     });
 
-
-    // Адаптация при изменении размера окна
+// Адаптация при изменении размера окна
     window.addEventListener('resize', () => {
-        if (window.matchMedia('(min-width: 768px) and (max-width: 1024px)').matches) {
-            // Для планшетов корректируем currentSlide
-            currentSlide = Math.min(currentSlide, Math.ceil(slideCount / 2) - 1);
-        }
         goToSlide(currentSlide, false);
     });
 
-
-    // Инициализация начального положения
+// Инициализация начального положения
     goToSlide(0, false);
 });
